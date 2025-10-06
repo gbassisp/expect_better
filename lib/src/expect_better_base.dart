@@ -1,3 +1,4 @@
+import 'package:expect_better/src/matchers.dart';
 import 'package:lean_extensions/lean_extensions.dart';
 import 'package:test/test.dart' as test;
 
@@ -28,6 +29,21 @@ extension BoolExpectation on BaseAssertion {
   /// built on top of this one.
   BaseAssertion matches(test.Matcher matcher, {String? because, Object? when}) {
     test.expect(actual, matcher, reason: because, skip: _skip(when));
+    return this;
+  }
+
+  /// Asserts that [actual] does not match the given [matcher].
+  BaseAssertion doesNotMatch(
+    test.Matcher matcher, {
+    String? because,
+    Object? when,
+  }) {
+    test.expect(
+      actual,
+      test.isNot(matcher),
+      reason: because,
+      skip: _skip(when),
+    );
     return this;
   }
 
@@ -80,6 +96,70 @@ extension BoolExpectation on BaseAssertion {
   /// Asserts that [actual] is falsy.
   BaseAssertion isFalsy({String? because, Object? when}) {
     expectThat(actual.isFalsy).isTrue(because: because, when: when);
+    return this;
+  }
+
+  /// Asserts that [actual] is of type [T].
+  BaseAssertion isA<T>({String? because, Object? when}) {
+    matches(test.isA<T>(), because: because, when: when);
+    return this;
+  }
+
+  /// Asserts that [actual] is not of type [T].
+  BaseAssertion isNotA<T>({String? because, Object? when}) {
+    doesNotMatch(test.isA<T>(), because: because, when: when);
+    return this;
+  }
+
+  /// Asserts that [actual] is an [Iterable] of elements of type [T].
+  /// You can also provide additional matchers to check the contents of the
+  /// iterable:
+  /// - [containingAllOf]: checks that the iterable contains all of the given
+  /// items, in any order.
+  /// - [containingAllOfInOrder]: checks that the iterable contains all of the
+  /// given items, in the given order.
+  /// - [containingAnyOf]: checks that the iterable contains any of the given
+  /// items.
+  /// - [containingNoneOf]: checks that the iterable contains none of the given
+  /// items.
+  BaseAssertion isIterableOf<T>({
+    String? because,
+    Object? when,
+    Iterable<T>? containingAllOf,
+    Iterable<T>? containingAllOfInOrder,
+    Iterable<T>? containingAnyOf,
+    Iterable<T>? containingNoneOf,
+  }) {
+    matches(test.isA<Iterable<T>>(), because: because, when: when);
+    final iterable = (actual as Iterable<T>?)?.toArray();
+    if (containingAllOf != null) {
+      expectThat(iterable).matches(
+        test.containsAllInOrder(containingAllOf),
+        because: because,
+        when: when,
+      );
+    }
+    if (containingAllOfInOrder != null) {
+      expectThat(iterable).matches(
+        test.containsAllInOrder(containingAllOfInOrder),
+        because: because,
+        when: when,
+      );
+    }
+    if (containingAnyOf != null) {
+      expectThat(iterable).matches(
+        containsAnyOf(containingAnyOf),
+        because: because,
+        when: when,
+      );
+    }
+    if (containingNoneOf != null) {
+      expectThat(iterable).matches(
+        test.isNot(containsAnyOf(containingNoneOf)),
+        because: because,
+        when: when,
+      );
+    }
     return this;
   }
 }
