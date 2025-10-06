@@ -7,9 +7,6 @@ Better assertions, but still using dart test library. Better readability and dis
 
 ## Usage
 
-TODO: Include short and useful examples for package users. Add longer examples
-to `/example` folder. 
-
 ```dart
 expectThat('something').isTruthy(because: 'it is a non-empty string');
 ```
