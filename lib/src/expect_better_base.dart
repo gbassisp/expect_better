@@ -27,60 +27,59 @@ extension BoolExpectation on BaseAssertion {
   /// `package:test`'s [test.expect] function. All other assertion methods are
   /// built on top of this one.
   BaseAssertion matches(test.Matcher matcher, {String? because, Object? when}) {
-    if (when != null) {
-      if (when is bool) {
-        if (!when) {
-          return this;
-        }
-      } else if (when is bool Function()) {
-        if (!when()) {
-          return this;
-        }
-      } else {
-        throw ArgumentError.value(
-          when,
-          'when',
-          'Must be a bool or a Function returning bool.',
-        );
-      }
-    }
-    test.expect(actual, matcher, reason: because);
+    test.expect(actual, matcher, reason: because, skip: _skip(when));
     return this;
   }
 
+  String? _skip(Object? when) {
+    if (when == null) {
+      return null;
+    }
+    if (when is bool && !when) {
+      return 'Skipped because when is false';
+    }
+    if (when is bool Function() && !when()) {
+      return 'Skipped because when returns false';
+    }
+    if (when.isFalsy) {
+      return 'Skipped because when is falsy';
+    }
+    return null;
+  }
+
   /// Asserts that [actual] is `true`.
-  BaseAssertion isTrue({String? because}) =>
-      matches(test.isTrue, because: because);
+  BaseAssertion isTrue({String? because, Object? when}) =>
+      matches(test.isTrue, because: because, when: when);
 
   /// Asserts that [actual] is `false`.
-  BaseAssertion isFalse({String? because}) =>
-      matches(test.isFalse, because: because);
+  BaseAssertion isFalse({String? because, Object? when}) =>
+      matches(test.isFalse, because: because, when: when);
 
   /// Asserts that [actual] is `null`.
-  BaseAssertion isNull({String? because}) =>
-      matches(test.isNull, because: because);
+  BaseAssertion isNull({String? because, Object? when}) =>
+      matches(test.isNull, because: because, when: when);
 
   /// Asserts that [actual] is not `null`.
-  BaseAssertion isNotNull({String? because}) =>
-      matches(test.isNotNull, because: because);
+  BaseAssertion isNotNull({String? because, Object? when}) =>
+      matches(test.isNotNull, because: because, when: when);
 
   /// Asserts that [actual] is not empty.
-  BaseAssertion isNotEmpty({String? because}) =>
-      matches(test.isNotEmpty, because: because);
+  BaseAssertion isNotEmpty({String? because, Object? when}) =>
+      matches(test.isNotEmpty, because: because, when: when);
 
   /// Asserts that [actual] is empty.
-  BaseAssertion isEmpty({String? because}) =>
-      matches(test.isEmpty, because: because);
+  BaseAssertion isEmpty({String? because, Object? when}) =>
+      matches(test.isEmpty, because: because, when: when);
 
   /// Asserts that [actual] is truthy.
-  BaseAssertion isTruthy({String? because}) {
-    test.expect(actual.isTruthy, test.isTrue, reason: because);
+  BaseAssertion isTruthy({String? because, Object? when}) {
+    expectThat(actual.isTruthy).isTrue(because: because, when: when);
     return this;
   }
 
   /// Asserts that [actual] is falsy.
-  BaseAssertion isFalsy({String? because}) {
-    test.expect(actual.isFalsy, test.isFalse, reason: because);
+  BaseAssertion isFalsy({String? because, Object? when}) {
+    expectThat(actual.isFalsy).isTrue(because: because, when: when);
     return this;
   }
 }
