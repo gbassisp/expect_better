@@ -134,7 +134,7 @@ extension BoolExpectation on BaseAssertion {
     final iterable = (actual as Iterable<T>?)?.toArray();
     if (containingAllOf != null) {
       expectThat(iterable).matches(
-        test.containsAllInOrder(containingAllOf),
+        test.containsAll(containingAllOf),
         because: because,
         when: when,
       );
