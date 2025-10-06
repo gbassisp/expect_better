@@ -1,5 +1,5 @@
 name: expect_better
-description: A starting point for Dart libraries or applications.
+description: Better assertions, but still using dart test library. Better readability and discovery when using code completion, without compromises.
 version: 1.0.0
 repository: https://github.com/gbassisp/expect_better
 
