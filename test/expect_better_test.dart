@@ -114,6 +114,83 @@ void main() {
       );
     });
   });
+
+  group('isIterable', () {
+    test('accepts an empty iterable', () {
+      expectThat(<dynamic>[]).isIterable();
+    });
+
+    test('accepts iterables of mixed types', () {
+      expectThat([1, 'two', 3.0, true]).isIterable();
+    });
+
+    test('accepts iterable containing all items in any order', () {
+      expectThat(['a', 2, true]).isIterable(
+        containingAllOf: [true, 'a', 2],
+      );
+    });
+
+    test('accepts iterable containing all items in specified order', () {
+      expectThat(['a', 2, true]).isIterable(
+        containingAllOfInOrder: ['a', 2, true],
+      );
+    });
+
+    test('rejects iterable not containing all items in specified order', () {
+      _expectItExecutes(
+        () => expectThat(['a', true, 2]).isIterable(
+          containingAllOfInOrder: ['a', 2, true],
+        ),
+      );
+    });
+
+    test('accepts iterable containing any of the specified items', () {
+      expectThat(['x', 2, 'y']).isIterable(
+        containingAnyOf: ['a', 2, 'b'],
+      );
+    });
+
+    test('rejects iterable containing none of the specified items', () {
+      _expectItExecutes(
+        () => expectThat(['x', 'y', 'z']).isIterable(
+          containingAnyOf: ['a', 2, 'b'],
+        ),
+      );
+    });
+
+    test('accepts iterable containing none of the specified items', () {
+      expectThat(['x', 'y', 'z']).isIterable(
+        containingNoneOf: ['a', 2, 'b'],
+      );
+    });
+
+    test('rejects iterable containing any of the specified items to exclude',
+        () {
+      _expectItExecutes(
+        () => expectThat(['x', 2, 'z']).isIterable(
+          containingNoneOf: ['a', 2, 'b'],
+        ),
+      );
+    });
+
+    test('combines multiple containment checks with mixed types', () {
+      expectThat([1, 'two', true, 3.0]).isIterable(
+        containingAllOf: [1, 'two'],
+        containingAnyOf: [true, false],
+        containingNoneOf: ['nope', 4],
+      );
+    });
+
+    test('accepts non-list iterables', () {
+      expectThat({1, 'two', 3.0}).isIterable();
+    });
+
+    test('rejects non-iterable types', () {
+      _expectItExecutes(() => expectThat(42).isIterable());
+      _expectItExecutes(() => expectThat('not an iterable').isIterable());
+      _expectItExecutes(() => expectThat(true).isIterable());
+    });
+  });
 }
 
 // meta - expect that expectThat executes

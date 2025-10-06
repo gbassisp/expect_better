@@ -122,6 +122,34 @@ extension BoolExpectation on BaseAssertion {
   /// items.
   /// - [containingNoneOf]: checks that the iterable contains none of the given
   /// items.
+  BaseAssertion isIterable({
+    String? because,
+    Object? when,
+    Iterable<Object?>? containingAllOf,
+    Iterable<Object?>? containingAllOfInOrder,
+    Iterable<Object?>? containingAnyOf,
+    Iterable<Object?>? containingNoneOf,
+  }) =>
+      isIterableOf<Object?>(
+        because: because,
+        when: when,
+        containingAllOf: containingAllOf,
+        containingAllOfInOrder: containingAllOfInOrder,
+        containingAnyOf: containingAnyOf,
+        containingNoneOf: containingNoneOf,
+      );
+
+  /// Asserts that [actual] is an [Iterable] of elements of type [T].
+  /// You can also provide additional matchers to check the contents of the
+  /// iterable:
+  /// - [containingAllOf]: checks that the iterable contains all of the given
+  /// items, in any order.
+  /// - [containingAllOfInOrder]: checks that the iterable contains all of the
+  /// given items, in the given order.
+  /// - [containingAnyOf]: checks that the iterable contains any of the given
+  /// items.
+  /// - [containingNoneOf]: checks that the iterable contains none of the given
+  /// items.
   BaseAssertion isIterableOf<T>({
     String? because,
     Object? when,
