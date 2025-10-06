@@ -11,4 +11,5 @@ dependencies:
   test: ^1.0.0
 
 dev_dependencies:
+  http_multi_server: ">=2.2.0"
   very_good_analysis:
