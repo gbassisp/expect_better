@@ -15,6 +15,12 @@ class _Expectation extends BaseAssertion {
   _Expectation(Object? actual) : super(actual);
 }
 
+/// A typed expectation that provides type-specific assertion methods.
+class TypedAssertion<T> extends BaseAssertion {
+  /// Creates an instance of [TypedAssertion].
+  TypedAssertion(T actual) : super(actual);
+}
+
 /// Starts an expectation chain with the given [actual] value.
 BaseAssertion expectThat(Object? actual) {
   return _Expectation(actual);
@@ -100,9 +106,9 @@ extension BoolExpectation on BaseAssertion {
   }
 
   /// Asserts that [actual] is of type [T].
-  BaseAssertion isA<T>({String? because, Object? when}) {
+  TypedAssertion<T> isA<T>({String? because, Object? when}) {
     matches(test.isA<T>(), because: because, when: when);
-    return this;
+    return TypedAssertion(actual as T);
   }
 
   /// Asserts that [actual] is not of type [T].
@@ -150,7 +156,7 @@ extension BoolExpectation on BaseAssertion {
   /// items.
   /// - [containingNoneOf]: checks that the iterable contains none of the given
   /// items.
-  BaseAssertion isIterableOf<T>({
+  TypedAssertion<Iterable<T>> isIterableOf<T>({
     String? because,
     Object? when,
     Iterable<T>? containingAllOf,
@@ -188,6 +194,6 @@ extension BoolExpectation on BaseAssertion {
         when: when,
       );
     }
-    return this;
+    return TypedAssertion(iterable!);
   }
 }
