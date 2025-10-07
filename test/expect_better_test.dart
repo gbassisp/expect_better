@@ -191,6 +191,39 @@ void main() {
       _expectItExecutes(() => expectThat(true).isIterable());
     });
   });
+
+  group('isIterable chained methods', () {
+    test('containsAnyOf accepts any of the specified items', () {
+      return expectThat([1, 4, 5]).isIterableOf<int>().containsAnyOf(
+        [1, 2, 3],
+      ).containsAnyOf([1]).containsAnyOf([5]).containsAnyOf([4]);
+    });
+
+    test('containsAnyOf rejects none of the specified items', () {
+      _expectItExecutes(
+        () =>
+            expectThat([4, 5, 6]).isIterableOf<int>().containsAnyOf([1, 2, 3]),
+      );
+    });
+    test('containsAnyOf skips when false', () {
+      expectThat([4, 5, 6])
+          .isIterableOf<int>()
+          .containsAnyOf([1, 2, 3], when: false);
+    });
+    test('containsAllOf accepts all of the specified items', () {
+      expectThat([1, 2, 3]).isIterableOf<int>().containsAllOf([1, 2]);
+    });
+    test('containsAllOf rejects missing any of the specified items', () {
+      _expectItExecutes(
+        () => expectThat([1, 2, 3]).isIterableOf<int>().containsAllOf([1, 4]),
+      );
+    });
+    test('containsAllOf skips when false', () {
+      expectThat([1, 2, 3])
+          .isIterableOf<int>()
+          .containsAllOf([1, 4], when: false);
+    });
+  });
 }
 
 // meta - expect that expectThat executes
