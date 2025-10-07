@@ -35,8 +35,6 @@ class TypedAssertion<T> extends BaseAssertion {
           preconditionSkip: preconditionSkip,
           negate: negate,
         );
-
-  T get _value => actual as T;
 }
 
 /// Starts an expectation chain with the given [actual] value.
