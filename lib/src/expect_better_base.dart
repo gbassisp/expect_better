@@ -5,23 +5,23 @@ import 'package:test/test.dart' as test;
 /// Checks if you are awesome. Spoiler: you are.
 abstract class BaseAssertion {
   /// Creates an instance of [BaseAssertion].
-  BaseAssertion(this.actual, {this.alwaysSkipped, this.negate = false});
+  BaseAssertion(this.actual, {this.preconditionSkip, this.negate = false});
 
   /// The actual value being tested.
   final Object? actual;
 
   /// If true, all assertions will be skipped.
-  final bool? alwaysSkipped;
+  final bool? preconditionSkip;
 
   /// If true, all assertions are negated.
   final bool negate;
 }
 
 class _Expectation extends BaseAssertion {
-  _Expectation(Object? actual, {bool? alwaysSkipped, bool negate = false})
+  _Expectation(Object? actual, {bool? preconditionSkip, bool negate = false})
       : super(
           actual,
-          alwaysSkipped: alwaysSkipped,
+          preconditionSkip: preconditionSkip,
           negate: negate,
         );
 }
@@ -29,10 +29,10 @@ class _Expectation extends BaseAssertion {
 /// A typed expectation that provides type-specific assertion methods.
 class TypedAssertion<T> extends BaseAssertion {
   /// Creates an instance of [TypedAssertion].
-  TypedAssertion(T actual, {bool? alwaysSkipped, bool negate = false})
+  TypedAssertion(T actual, {bool? preconditionSkip, bool negate = false})
       : super(
           actual,
-          alwaysSkipped: alwaysSkipped,
+          preconditionSkip: preconditionSkip,
           negate: negate,
         );
 }
@@ -75,8 +75,8 @@ extension BaseAssertionMethods<T extends BaseAssertion> on T {
   }
 
   String? _skipReason(Object? when) {
-    if (alwaysSkipped ?? false) {
-      return 'Skipped because alwaysSkipped is true';
+    if (preconditionSkip ?? false) {
+      return 'Skipped because of a precondition';
     }
     if (when == null) {
       return null;
@@ -196,7 +196,7 @@ extension BaseAssertionMethods<T extends BaseAssertion> on T {
     final iterable = (actual as Iterable<T>?)?.toArray();
     final TypedAssertion<Iterable<T>> typed;
     if (_skip(when)) {
-      typed = TypedAssertion<Iterable<T>>([], alwaysSkipped: true);
+      typed = TypedAssertion<Iterable<T>>([], preconditionSkip: true);
     } else {
       typed = TypedAssertion<Iterable<T>>(iterable!);
     }
