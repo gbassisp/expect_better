@@ -117,7 +117,7 @@ extension BoolExpectation on BaseAssertion {
     return this;
   }
 
-  /// Asserts that [actual] is an [Iterable] of elements of type [T].
+  /// Asserts that [actual] is an [Iterable].
   /// You can also provide additional matchers to check the contents of the
   /// iterable:
   /// - [containingAllOf]: checks that the iterable contains all of the given
