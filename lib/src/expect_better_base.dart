@@ -1,24 +1,40 @@
-import 'package:expect_better/src/matchers.dart';
+import 'package:expect_better/src/matchers.dart' as matchers;
 import 'package:lean_extensions/lean_extensions.dart';
 import 'package:test/test.dart' as test;
 
 /// Checks if you are awesome. Spoiler: you are.
 abstract class BaseAssertion {
   /// Creates an instance of [BaseAssertion].
-  BaseAssertion(this.actual);
+  BaseAssertion(this.actual, {this.alwaysSkipped, this.negate = false});
 
   /// The actual value being tested.
-  Object? actual;
+  final Object? actual;
+
+  /// If true, all assertions will be skipped.
+  final bool? alwaysSkipped;
+
+  /// If true, all assertions are negated.
+  final bool negate;
 }
 
 class _Expectation extends BaseAssertion {
-  _Expectation(Object? actual) : super(actual);
+  _Expectation(Object? actual, {bool? alwaysSkipped, bool negate = false})
+      : super(
+          actual,
+          alwaysSkipped: alwaysSkipped,
+          negate: negate,
+        );
 }
 
 /// A typed expectation that provides type-specific assertion methods.
 class TypedAssertion<T> extends BaseAssertion {
   /// Creates an instance of [TypedAssertion].
-  TypedAssertion(T actual) : super(actual);
+  TypedAssertion(T actual, {bool? alwaysSkipped, bool negate = false})
+      : super(
+          actual,
+          alwaysSkipped: alwaysSkipped,
+          negate: negate,
+        );
 }
 
 /// Starts an expectation chain with the given [actual] value.
@@ -27,19 +43,24 @@ BaseAssertion expectThat(Object? actual) {
 }
 
 /// Assertion methods
-extension BoolExpectation on BaseAssertion {
+extension BaseAssertionMethods<T extends BaseAssertion> on T {
   /// Asserts that [actual] matches the given [matcher].
   ///
   /// This is the most basic assertion method, which is a direct wrapper around
   /// `package:test`'s [test.expect] function. All other assertion methods are
   /// built on top of this one.
-  BaseAssertion matches(test.Matcher matcher, {String? because, Object? when}) {
-    test.expect(actual, matcher, reason: because, skip: _skip(when));
+  T matches(test.Matcher matcher, {String? because, Object? when}) {
+    test.expect(
+      actual,
+      matcher,
+      reason: because,
+      skip: _skipReason(when),
+    );
     return this;
   }
 
   /// Asserts that [actual] does not match the given [matcher].
-  BaseAssertion doesNotMatch(
+  T doesNotMatch(
     test.Matcher matcher, {
     String? because,
     Object? when,
@@ -48,12 +69,15 @@ extension BoolExpectation on BaseAssertion {
       actual,
       test.isNot(matcher),
       reason: because,
-      skip: _skip(when),
+      skip: _skipReason(when),
     );
     return this;
   }
 
-  String? _skip(Object? when) {
+  String? _skipReason(Object? when) {
+    if (alwaysSkipped ?? false) {
+      return 'Skipped because alwaysSkipped is true';
+    }
     if (when == null) {
       return null;
     }
@@ -67,6 +91,10 @@ extension BoolExpectation on BaseAssertion {
       return 'Skipped because when is falsy';
     }
     return null;
+  }
+
+  bool _skip(Object? when) {
+    return _skipReason(when) != null;
   }
 
   /// Asserts that [actual] is `true`.
@@ -166,34 +194,85 @@ extension BoolExpectation on BaseAssertion {
   }) {
     matches(test.isA<Iterable<T>>(), because: because, when: when);
     final iterable = (actual as Iterable<T>?)?.toArray();
+    final TypedAssertion<Iterable<T>> typed;
+    if (_skip(when)) {
+      typed = TypedAssertion<Iterable<T>>([], alwaysSkipped: true);
+    } else {
+      typed = TypedAssertion<Iterable<T>>(iterable!);
+    }
     if (containingAllOf != null) {
-      expectThat(iterable).matches(
-        test.containsAll(containingAllOf),
+      typed.containsAllOf(
+        containingAllOf,
         because: because,
         when: when,
       );
     }
     if (containingAllOfInOrder != null) {
-      expectThat(iterable).matches(
-        test.containsAllInOrder(containingAllOfInOrder),
+      typed.containsAllOfInOrder(
+        containingAllOfInOrder,
         because: because,
         when: when,
       );
     }
     if (containingAnyOf != null) {
-      expectThat(iterable).matches(
-        containsAnyOf(containingAnyOf),
+      typed.containsAnyOf(
+        containingAnyOf,
         because: because,
         when: when,
       );
     }
     if (containingNoneOf != null) {
-      expectThat(iterable).matches(
-        test.isNot(containsAnyOf(containingNoneOf)),
+      typed.matches(
+        test.isNot(matchers.containsAnyOf(containingNoneOf)),
         because: because,
         when: when,
       );
     }
-    return TypedAssertion(iterable!);
+    return typed;
+  }
+}
+
+/// Typed assertion methods for [Iterable]s.
+extension TypedAssertionMethods<T> on TypedAssertion<Iterable<T>> {
+  /// Asserts that [actual] contains any of the [items].
+  TypedAssertion<Iterable<T>> containsAnyOf(
+    Iterable<T> items, {
+    String? because,
+    Object? when,
+  }) {
+    matches(
+      matchers.containsAnyOf(items),
+      because: because,
+      when: when,
+    );
+    return this;
+  }
+
+  /// Asserts that [actual] contains all of the [items].
+  TypedAssertion<Iterable<T>> containsAllOf(
+    Iterable<T> items, {
+    String? because,
+    Object? when,
+  }) {
+    matches(
+      test.containsAll(items),
+      because: because,
+      when: when,
+    );
+    return this;
+  }
+
+  /// Asserts that [actual] contains all of the [items] in order.
+  TypedAssertion<Iterable<T>> containsAllOfInOrder(
+    Iterable<T> items, {
+    String? because,
+    Object? when,
+  }) {
+    matches(
+      test.containsAllInOrder(items),
+      because: because,
+      when: when,
+    );
+    return this;
   }
 }
