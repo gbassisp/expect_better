@@ -35,6 +35,8 @@ class TypedAssertion<T> extends BaseAssertion {
           preconditionSkip: preconditionSkip,
           negate: negate,
         );
+
+  T get _value => actual as T;
 }
 
 /// Starts an expectation chain with the given [actual] value.
@@ -43,13 +45,13 @@ BaseAssertion expectThat(Object? actual) {
 }
 
 /// Assertion methods
-extension BaseAssertionMethods<T extends BaseAssertion> on T {
+extension BaseAssertionMethods<A extends BaseAssertion> on A {
   /// Asserts that [actual] matches the given [matcher].
   ///
   /// This is the most basic assertion method, which is a direct wrapper around
   /// `package:test`'s [test.expect] function. All other assertion methods are
   /// built on top of this one.
-  T matches(test.Matcher matcher, {String? because, Object? when}) {
+  A matches(test.Matcher matcher, {String? because, Object? when}) {
     test.expect(
       actual,
       matcher,
@@ -60,7 +62,7 @@ extension BaseAssertionMethods<T extends BaseAssertion> on T {
   }
 
   /// Asserts that [actual] does not match the given [matcher].
-  T doesNotMatch(
+  A doesNotMatch(
     test.Matcher matcher, {
     String? because,
     Object? when,
@@ -98,37 +100,37 @@ extension BaseAssertionMethods<T extends BaseAssertion> on T {
   }
 
   /// Asserts that [actual] is `true`.
-  BaseAssertion isTrue({String? because, Object? when}) =>
+  A isTrue({String? because, Object? when}) =>
       matches(test.isTrue, because: because, when: when);
 
   /// Asserts that [actual] is `false`.
-  BaseAssertion isFalse({String? because, Object? when}) =>
+  A isFalse({String? because, Object? when}) =>
       matches(test.isFalse, because: because, when: when);
 
   /// Asserts that [actual] is `null`.
-  BaseAssertion isNull({String? because, Object? when}) =>
+  A isNull({String? because, Object? when}) =>
       matches(test.isNull, because: because, when: when);
 
   /// Asserts that [actual] is not `null`.
-  BaseAssertion isNotNull({String? because, Object? when}) =>
+  A isNotNull({String? because, Object? when}) =>
       matches(test.isNotNull, because: because, when: when);
 
   /// Asserts that [actual] is not empty.
-  BaseAssertion isNotEmpty({String? because, Object? when}) =>
+  A isNotEmpty({String? because, Object? when}) =>
       matches(test.isNotEmpty, because: because, when: when);
 
   /// Asserts that [actual] is empty.
-  BaseAssertion isEmpty({String? because, Object? when}) =>
+  A isEmpty({String? because, Object? when}) =>
       matches(test.isEmpty, because: because, when: when);
 
   /// Asserts that [actual] is truthy.
-  BaseAssertion isTruthy({String? because, Object? when}) {
+  A isTruthy({String? because, Object? when}) {
     expectThat(actual.isTruthy).isTrue(because: because, when: when);
     return this;
   }
 
   /// Asserts that [actual] is falsy.
-  BaseAssertion isFalsy({String? because, Object? when}) {
+  A isFalsy({String? because, Object? when}) {
     expectThat(actual.isFalsy).isTrue(because: because, when: when);
     return this;
   }
@@ -140,7 +142,7 @@ extension BaseAssertionMethods<T extends BaseAssertion> on T {
   }
 
   /// Asserts that [actual] is not of type [T].
-  BaseAssertion isNotA<T>({String? because, Object? when}) {
+  A isNotA<T>({String? because, Object? when}) {
     doesNotMatch(test.isA<T>(), because: because, when: when);
     return this;
   }
@@ -156,7 +158,7 @@ extension BaseAssertionMethods<T extends BaseAssertion> on T {
   /// items.
   /// - [containingNoneOf]: checks that the iterable contains none of the given
   /// items.
-  BaseAssertion isIterable({
+  TypedAssertion<Iterable<Object?>> isIterable({
     String? because,
     Object? when,
     Iterable<Object?>? containingAllOf,
@@ -222,8 +224,8 @@ extension BaseAssertionMethods<T extends BaseAssertion> on T {
       );
     }
     if (containingNoneOf != null) {
-      typed.matches(
-        test.isNot(matchers.containsAnyOf(containingNoneOf)),
+      typed.doesNotMatch(
+        matchers.containsAnyOf(containingNoneOf),
         because: because,
         when: when,
       );
@@ -233,7 +235,7 @@ extension BaseAssertionMethods<T extends BaseAssertion> on T {
 }
 
 /// Typed assertion methods for [Iterable]s.
-extension TypedAssertionMethods<T> on TypedAssertion<Iterable<T>> {
+extension TypedAssertionMethods<T, A extends TypedAssertion<Iterable<T>>> on A {
   /// Asserts that [actual] contains any of the [items].
   TypedAssertion<Iterable<T>> containsAnyOf(
     Iterable<T> items, {
