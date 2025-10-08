@@ -224,6 +224,140 @@ void main() {
           .containsAllOf([1, 4], when: false);
     });
   });
+
+  group('isIterableOf edge cases', () {
+    test('accepts null in Iterable<Object?>', () {
+      expectThat([1, null, 3]).isIterableOf<Object?>();
+    });
+
+    test('rejects null in non-nullable Iterable', () {
+      _expectItFails(() => expectThat([1, null, 3]).isIterableOf<int>());
+    });
+
+    test('accepts empty iterable with complex type', () {
+      expectThat(<List<int>>[]).isIterableOf<List<int>>();
+    });
+
+    test('handles nested iterables', () {
+      expectThat([
+        [1, 2],
+        [3, 4],
+      ]).isIterableOf<List<int>>();
+      _expectItFails(
+        () => expectThat([
+          [1, 2],
+          ['3', '4'],
+        ]).isIterableOf<List<int>>(),
+      );
+    });
+  });
+
+  group('isIterable advanced scenarios', () {
+    test('handles async iterables', () {
+      expectThat(Stream<int>.fromIterable([1, 2, 3])).isA<Stream<int>>();
+    });
+
+    test('handles custom iterable types', () {
+      const customIterable = _CustomIterable([1, 2, 3]);
+      expectThat(customIterable).isIterableOf<int>(
+        containingAllOf: [1, 2, 3],
+      );
+    });
+
+    test('accepts empty map entries as iterable', () {
+      final map = <String, int>{};
+      expectThat(map.entries).isIterable();
+    });
+
+    test('works with map entries containing mixed types', () {
+      final map = {'a': 1, 'b': 'two', 'c': true};
+      expectThat(map.entries).isIterable();
+    });
+  });
+
+  group('isIterableOf with complex types', () {
+    test('works with custom objects', () {
+      final items = [
+        const _TestObject(1),
+        const _TestObject(2),
+        const _TestObject(3),
+      ];
+      expectThat(items).isIterableOf<_TestObject>();
+    });
+
+    test('handles inheritance correctly', () {
+      final items = [
+        _ChildTestObject(1),
+        _ChildTestObject(2),
+      ];
+      expectThat(items).isIterableOf<_TestObject>(
+        because: 'ChildTestObject is a TestObject',
+      );
+      expectThat(items).isIterableOf<_ChildTestObject>();
+    });
+
+    test('handles Future type correctly', () {
+      final futures = [
+        Future.value(1),
+        Future.value(2),
+      ];
+      expectThat(futures).isIterableOf<Future<int>>();
+    });
+  });
+
+  group('isIterableOf with containment combinations', () {
+    test('combines allOf and anyOf with partial overlap', () {
+      expectThat([1, 2, 3, 4]).isIterableOf<int>(
+        containingAllOf: [1, 2],
+        containingAnyOf: [3, 5],
+      );
+    });
+
+    test('combines allOf and noneOf with no overlap', () {
+      expectThat([1, 2, 3]).isIterableOf<int>(
+        containingAllOf: [1, 2],
+        containingNoneOf: [4, 5],
+      );
+    });
+
+    test('fails when containment requirements conflict', () {
+      _expectItFails(
+        () => expectThat([1, 2, 3]).isIterableOf<int>(
+          containingAllOf: [1, 2],
+          containingNoneOf: [1, 4],
+          because: 'Conflicts with containingAllOf',
+        ),
+      );
+    });
+
+    test('handles empty iterables in containment checks', () {
+      expectThat(<int>[]).isIterableOf<int>(
+        containingNoneOf: [1, 2, 3],
+      );
+      _expectItFails(
+        () => expectThat(<int>[]).isIterableOf<int>(
+          containingAnyOf: [1, 2, 3],
+        ),
+      );
+    });
+  });
+}
+
+class _TestObject {
+  const _TestObject(this.value);
+  final int value;
+}
+
+class _ChildTestObject extends _TestObject {
+  _ChildTestObject(int value) : super(value);
+}
+
+class _CustomIterable extends Iterable<int> {
+  const _CustomIterable(this._items);
+  final List<int> _items;
+
+  @override
+  Iterator<int> get iterator => _items.iterator;
 }
 
 // meta - expect that expectThat executes
