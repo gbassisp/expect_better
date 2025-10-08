@@ -9,12 +9,12 @@ void main() {
 
     test('isTrue', () {
       expectThat(true).isTrue();
-      _expectItExecutes(() => expectThat(false).isTrue());
+      _expectItFails(() => expectThat(false).isTrue());
     });
 
     test('isFalse', () {
       expectThat(false).isFalse();
-      _expectItExecutes(() => expectThat(true).isFalse());
+      _expectItFails(() => expectThat(true).isFalse());
     });
   });
 
@@ -32,15 +32,15 @@ void main() {
     });
 
     test('does not skip when true', () {
-      _expectItExecutes(() => expectThat(false).isTrue(when: true));
+      _expectItFails(() => expectThat(false).isTrue(when: true));
     });
 
     test('does not skip when function returns true', () {
-      _expectItExecutes(() => expectThat(false).isTrue(when: () => true));
+      _expectItFails(() => expectThat(false).isTrue(when: () => true));
     });
 
     test('does not skip when object is truthy', () {
-      _expectItExecutes(() => expectThat(false).isTrue(when: 1));
+      _expectItFails(() => expectThat(false).isTrue(when: 1));
     });
   });
 
@@ -54,7 +54,7 @@ void main() {
     });
 
     test('rejects an iterable of the wrong type', () {
-      _expectItExecutes(() => expectThat(['1', '2']).isIterableOf<int>());
+      _expectItFails(() => expectThat(['1', '2']).isIterableOf<int>());
     });
 
     test('accepts iterable containing all items in any order', () {
@@ -70,7 +70,7 @@ void main() {
     });
 
     test('rejects iterable not containing all items in specified order', () {
-      _expectItExecutes(
+      _expectItFails(
         () => expectThat([3, 2, 1]).isIterableOf<int>(
           containingAllOfInOrder: [1, 2, 3],
         ),
@@ -84,7 +84,7 @@ void main() {
     });
 
     test('rejects iterable containing none of the specified items', () {
-      _expectItExecutes(
+      _expectItFails(
         () => expectThat([4, 5, 6]).isIterableOf<int>(
           containingAnyOf: [1, 2, 3],
         ),
@@ -99,7 +99,7 @@ void main() {
 
     test('rejects iterable containing any of the specified items to exclude',
         () {
-      _expectItExecutes(
+      _expectItFails(
         () => expectThat([1, 4, 5]).isIterableOf<int>(
           containingNoneOf: [1, 2, 3],
         ),
@@ -137,7 +137,7 @@ void main() {
     });
 
     test('rejects iterable not containing all items in specified order', () {
-      _expectItExecutes(
+      _expectItFails(
         () => expectThat(['a', true, 2]).isIterable(
           containingAllOfInOrder: ['a', 2, true],
         ),
@@ -151,7 +151,7 @@ void main() {
     });
 
     test('rejects iterable containing none of the specified items', () {
-      _expectItExecutes(
+      _expectItFails(
         () => expectThat(['x', 'y', 'z']).isIterable(
           containingAnyOf: ['a', 2, 'b'],
         ),
@@ -166,7 +166,7 @@ void main() {
 
     test('rejects iterable containing any of the specified items to exclude',
         () {
-      _expectItExecutes(
+      _expectItFails(
         () => expectThat(['x', 2, 'z']).isIterable(
           containingNoneOf: ['a', 2, 'b'],
         ),
@@ -186,9 +186,9 @@ void main() {
     });
 
     test('rejects non-iterable types', () {
-      _expectItExecutes(() => expectThat(42).isIterable());
-      _expectItExecutes(() => expectThat('not an iterable').isIterable());
-      _expectItExecutes(() => expectThat(true).isIterable());
+      _expectItFails(() => expectThat(42).isIterable());
+      _expectItFails(() => expectThat('not an iterable').isIterable());
+      _expectItFails(() => expectThat(true).isIterable());
     });
   });
 
@@ -200,7 +200,7 @@ void main() {
     });
 
     test('containsAnyOf rejects none of the specified items', () {
-      _expectItExecutes(
+      _expectItFails(
         () =>
             expectThat([4, 5, 6]).isIterableOf<int>().containsAnyOf([1, 2, 3]),
       );
@@ -214,7 +214,7 @@ void main() {
       expectThat([1, 2, 3]).isIterableOf<int>().containsAllOf([1, 2]);
     });
     test('containsAllOf rejects missing any of the specified items', () {
-      _expectItExecutes(
+      _expectItFails(
         () => expectThat([1, 2, 3]).isIterableOf<int>().containsAllOf([1, 4]),
       );
     });
@@ -228,6 +228,6 @@ void main() {
 
 // meta - expect that expectThat executes
 // it needs to be a failing test
-void _expectItExecutes(BaseAssertion Function() failingCase) {
+void _expectItFails(BaseAssertion Function() failingCase) {
   expect(() => failingCase(), throwsA(isA<TestFailure>()));
 }
