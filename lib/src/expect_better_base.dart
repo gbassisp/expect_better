@@ -65,11 +65,10 @@ extension BaseAssertionMethods<A extends BaseAssertion> on A {
     String? because,
     Object? when,
   }) {
-    test.expect(
-      actual,
+    matches(
       test.isNot(matcher),
-      reason: because,
-      skip: _skipReason(when),
+      because: because,
+      when: when,
     );
     return this;
   }
@@ -123,13 +122,13 @@ extension BaseAssertionMethods<A extends BaseAssertion> on A {
 
   /// Asserts that [actual] is truthy.
   A isTruthy({String? because, Object? when}) {
-    expectThat(actual.isTruthy).isTrue(because: because, when: when);
+    matches(matchers.isTruthy, because: because, when: when);
     return this;
   }
 
   /// Asserts that [actual] is falsy.
   A isFalsy({String? because, Object? when}) {
-    expectThat(actual.isFalsy).isTrue(because: because, when: when);
+    matches(matchers.isFalsy, because: because, when: when);
     return this;
   }
 
@@ -222,8 +221,8 @@ extension BaseAssertionMethods<A extends BaseAssertion> on A {
       );
     }
     if (containingNoneOf != null) {
-      typed.doesNotMatch(
-        matchers.containsAnyOf(containingNoneOf),
+      typed.containsNoneOf(
+        containingNoneOf,
         because: because,
         when: when,
       );
@@ -270,6 +269,20 @@ extension TypedAssertionMethods<T, A extends TypedAssertion<Iterable<T>>> on A {
   }) {
     matches(
       test.containsAllInOrder(items),
+      because: because,
+      when: when,
+    );
+    return this;
+  }
+
+  /// Asserts that [actual] contains none of the [items].
+  TypedAssertion<Iterable<T>> containsNoneOf(
+    Iterable<T> items, {
+    String? because,
+    Object? when,
+  }) {
+    doesNotMatch(
+      matchers.containsAnyOf(items),
       because: because,
       when: when,
     );
