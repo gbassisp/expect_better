@@ -1,4 +1,5 @@
 import 'package:expect_better/expect_better.dart';
+import 'package:expect_better/src/expect_better_base.dart';
 import 'package:test/test.dart';
 
 void main() {
@@ -249,6 +250,68 @@ void main() {
           ['3', '4'],
         ]).isIterableOf<List<int>>(),
       );
+    });
+  });
+
+  group('matchers', () {
+    group('isTruthy', () {
+      test('matches truthy values', () {
+        expectThat(1).isTruthy();
+        expectThat(true).isTruthy();
+        expectThat([1]).isTruthy();
+        expectThat('text').isTruthy();
+      });
+
+      test('does not match falsy values', () {
+        _expectItFails(() => expectThat(0).isTruthy());
+        _expectItFails(() => expectThat(false).isTruthy());
+        _expectItFails(() => expectThat('').isTruthy());
+        _expectItFails(() => expectThat([]).isTruthy());
+        _expectItFails(() => expectThat(null).isTruthy());
+      });
+    });
+
+    group('isFalsy', () {
+      test('matches falsy values', () {
+        expectThat(0).isFalsy();
+        expectThat(false).isFalsy();
+        expectThat('').isFalsy();
+        expectThat([]).isFalsy();
+        expectThat(null).isFalsy();
+      });
+
+      test('does not match truthy values', () {
+        _expectItFails(() => expectThat(1).isFalsy());
+        _expectItFails(() => expectThat(true).isFalsy());
+        _expectItFails(() => expectThat([1]).isFalsy());
+        _expectItFails(() => expectThat('text').isFalsy());
+      });
+    });
+  });
+
+  group('when variations', () {
+    test('skips when function returns false', () {
+      expectThat(false).isTrue(when: () => false);
+    });
+
+    test('skips when value is falsy', () {
+      expectThat(false).isTrue(when: 0);
+      expectThat(false).isTrue(when: '');
+      expectThat(false).isTrue(when: []);
+    });
+
+    test('executes when value is null', () {
+      _expectItFails(() => expectThat(false).isTrue(when: null));
+    });
+
+    test('executes when function returns true', () {
+      _expectItFails(() => expectThat(false).isTrue(when: () => true));
+    });
+
+    test('executes when value is truthy', () {
+      _expectItFails(() => expectThat(false).isTrue(when: 1));
+      _expectItFails(() => expectThat(false).isTrue(when: 'text'));
+      _expectItFails(() => expectThat(false).isTrue(when: [1]));
     });
   });
 
