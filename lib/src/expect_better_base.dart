@@ -86,8 +86,14 @@ extension BaseAssertionMethods<A extends BaseAssertion> on A {
     if (when is bool Function() && !when()) {
       return 'Skipped because when returns false';
     }
+    if (when is Object? Function()) {
+      final result = when();
+      if (result.isFalsy && result != null) {
+        return 'Skipped because when returns falsy value: $result';
+      }
+    }
     if (when.isFalsy) {
-      return 'Skipped because when is falsy';
+      return 'Skipped because when is falsy: $when';
     }
     return null;
   }
