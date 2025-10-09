@@ -107,14 +107,6 @@ extension BaseAssertionMethods<A extends BaseAssertion<Object?>> on A {
   A isNotNull({String? because, Object? when}) =>
       matches(test.isNotNull, because: because, when: when);
 
-  /// Asserts that [actual] is not empty.
-  A isNotEmpty({String? because, Object? when}) =>
-      matches(test.isNotEmpty, because: because, when: when);
-
-  /// Asserts that [actual] is empty.
-  A isEmpty({String? because, Object? when}) =>
-      matches(test.isEmpty, because: because, when: when);
-
   /// Asserts that [actual] is truthy.
   A isTruthy({String? because, Object? when}) {
     matches(matchers.isTruthy, because: because, when: when);

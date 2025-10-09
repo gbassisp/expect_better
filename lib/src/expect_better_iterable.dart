@@ -4,6 +4,14 @@ import 'package:test/test.dart' as test;
 
 /// Assertion methods
 extension IterableBaseAssertionMethods<A extends BaseAssertion<Object?>> on A {
+  /// Asserts that [actual] is not empty.
+  A isNotEmpty({String? because, Object? when}) =>
+      matches(test.isNotEmpty, because: because, when: when);
+
+  /// Asserts that [actual] is empty.
+  A isEmpty({String? because, Object? when}) =>
+      matches(test.isEmpty, because: because, when: when);
+
   /// Asserts that [actual] is an [Iterable].
   /// You can also provide additional matchers to check the contents of the
   /// iterable:
