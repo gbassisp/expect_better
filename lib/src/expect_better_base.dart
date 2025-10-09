@@ -17,15 +17,6 @@ abstract class BaseAssertion {
   final bool negate;
 }
 
-class _Expectation extends BaseAssertion {
-  _Expectation(Object? actual, {bool? preconditionSkip, bool negate = false})
-      : super(
-          actual,
-          preconditionSkip: preconditionSkip,
-          negate: negate,
-        );
-}
-
 /// A typed expectation that provides type-specific assertion methods.
 class TypedAssertion<T> extends BaseAssertion {
   /// Creates an instance of [TypedAssertion].
@@ -47,8 +38,8 @@ class TypedAssertion<T> extends BaseAssertion {
 }
 
 /// Starts an expectation chain with the given [actual] value.
-BaseAssertion expectThat(Object? actual) {
-  return _Expectation(actual);
+TypedAssertion<T> expectThat<T>(T actual) {
+  return TypedAssertion<T>(actual);
 }
 
 /// Assertion methods
