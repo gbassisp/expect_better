@@ -403,6 +403,22 @@ void main() {
       );
     });
   });
+
+  group('method discoverability', () {
+    test('method chaining upcasts types', () {
+      const Object str = 'a string';
+      expect(
+        () {
+          // the test shows the method is not available until upcast
+          // ignore: avoid_dynamic_calls
+          (expectThat(str) as dynamic).startsWith('a').endsWith('string');
+        },
+        throwsNoSuchMethodError,
+      );
+
+      expectThat(str).isA<String>().startsWith('a').endsWith('string');
+    });
+  });
 }
 
 class _TestObject {
