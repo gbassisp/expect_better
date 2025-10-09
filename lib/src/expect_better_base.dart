@@ -35,6 +35,15 @@ class TypedAssertion<T> extends BaseAssertion {
           preconditionSkip: preconditionSkip,
           negate: negate,
         );
+
+  /// Creates an instance of [TypedAssertion] that will never run any
+  /// assertions, because it failed a precondition.
+  TypedAssertion.never()
+      : super(
+          null,
+          preconditionSkip: true,
+          negate: false,
+        );
 }
 
 /// Starts an expectation chain with the given [actual] value.
@@ -141,6 +150,9 @@ extension BaseAssertionMethods<A extends BaseAssertion> on A {
   /// Asserts that [actual] is of type [T].
   TypedAssertion<T> isA<T>({String? because, Object? when}) {
     matches(test.isA<T>(), because: because, when: when);
+    if (_skip(when)) {
+      return TypedAssertion.never();
+    }
     return TypedAssertion(actual as T);
   }
 
@@ -197,14 +209,7 @@ extension BaseAssertionMethods<A extends BaseAssertion> on A {
     Iterable<T>? containingAnyOf,
     Iterable<T>? containingNoneOf,
   }) {
-    matches(test.isA<Iterable<T>>(), because: because, when: when);
-    final iterable = (actual as Iterable<T>?)?.toArray();
-    final TypedAssertion<Iterable<T>> typed;
-    if (_skip(when)) {
-      typed = TypedAssertion<Iterable<T>>([], preconditionSkip: true);
-    } else {
-      typed = TypedAssertion<Iterable<T>>(iterable!);
-    }
+    final typed = isA<Iterable<T>>(because: because, when: when);
     if (containingAllOf != null) {
       typed.containsAllOf(
         containingAllOf,
