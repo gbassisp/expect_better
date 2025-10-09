@@ -1,5 +1,5 @@
+import 'package:expect_better/src/expect_better_internal.dart';
 import 'package:expect_better/src/matchers.dart' as matchers;
-import 'package:lean_extensions/lean_extensions.dart';
 import 'package:test/test.dart' as test;
 
 /// Starts an expectation chain with the given [actual] value.
@@ -43,7 +43,7 @@ extension BaseAssertionMethods<A extends BaseAssertion<Object?>> on A {
       actual,
       matcher,
       reason: because,
-      skip: _skipReason(when),
+      skip: skipReason(when),
     );
     return this;
   }
@@ -60,35 +60,6 @@ extension BaseAssertionMethods<A extends BaseAssertion<Object?>> on A {
       when: when,
     );
     return this;
-  }
-
-  String? _skipReason(Object? when) {
-    if (preconditionSkip ?? false) {
-      return 'Skipped because of a precondition';
-    }
-    if (when == null) {
-      return null;
-    }
-    if (when is bool && !when) {
-      return 'Skipped because when is false';
-    }
-    if (when is bool Function() && !when()) {
-      return 'Skipped because when returns false';
-    }
-    if (when is Object? Function()) {
-      final result = when();
-      if (result.isFalsy && result != null) {
-        return 'Skipped because when returns falsy value: $result';
-      }
-    }
-    if (when.isFalsy) {
-      return 'Skipped because when is falsy: $when';
-    }
-    return null;
-  }
-
-  bool _skip(Object? when) {
-    return _skipReason(when) != null;
   }
 
   /// Asserts that [actual] is `true`.
@@ -122,7 +93,7 @@ extension BaseAssertionMethods<A extends BaseAssertion<Object?>> on A {
   /// Asserts that [actual] is of type [T].
   BaseAssertion<T> isA<T>({String? because, Object? when}) {
     matches(test.isA<T>(), because: because, when: when);
-    if (_skip(when)) {
+    if (skip(when)) {
       return BaseAssertion.never();
     }
     return BaseAssertion(actual as T);
