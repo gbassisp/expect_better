@@ -1,5 +1,4 @@
 import 'package:expect_better/expect_better.dart';
-import 'package:expect_better/src/expect_better_base.dart';
 import 'package:test/test.dart';
 
 void main() {
@@ -266,7 +265,7 @@ void main() {
         _expectItFails(() => expectThat(0).isTruthy());
         _expectItFails(() => expectThat(false).isTruthy());
         _expectItFails(() => expectThat('').isTruthy());
-        _expectItFails(() => expectThat([]).isTruthy());
+        _expectItFails(() => expectThat(<int>[]).isTruthy());
         _expectItFails(() => expectThat(null).isTruthy());
       });
     });
@@ -276,7 +275,7 @@ void main() {
         expectThat(0).isFalsy();
         expectThat(false).isFalsy();
         expectThat('').isFalsy();
-        expectThat([]).isFalsy();
+        expectThat(<int>[]).isFalsy();
         expectThat(null).isFalsy();
       });
 
