@@ -1,7 +1,6 @@
 import 'package:expect_better/expect_better.dart';
 import 'package:lean_extensions/lean_extensions.dart';
 import 'package:meta/meta.dart';
-import 'package:test/test.dart' as test;
 
 @internal
 extension InternalBaseAssertionMethods<T> on BaseAssertion<T> {
