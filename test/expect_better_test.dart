@@ -424,6 +424,6 @@ class _CustomIterable extends Iterable<int> {
 
 // meta - expect that expectThat executes
 // it needs to be a failing test
-void _expectItFails(BaseAssertion Function() failingCase) {
+void _expectItFails(BaseAssertion<Object?> Function() failingCase) {
   expect(() => failingCase(), throwsA(isA<TestFailure>()));
 }

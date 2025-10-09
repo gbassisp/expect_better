@@ -2,13 +2,27 @@ import 'package:expect_better/src/matchers.dart' as matchers;
 import 'package:lean_extensions/lean_extensions.dart';
 import 'package:test/test.dart' as test;
 
-/// Checks if you are awesome. Spoiler: you are.
-abstract class BaseAssertion {
+/// Starts an expectation chain with the given [actual] value.
+BaseAssertion<T> expectThat<T>(T actual) {
+  return BaseAssertion<T>(actual);
+}
+
+/// A typed expectation that provides type-specific assertion methods.
+class BaseAssertion<T> {
   /// Creates an instance of [BaseAssertion].
-  BaseAssertion(this.actual, {this.preconditionSkip, this.negate = false});
+  BaseAssertion(
+    this.actual, {
+    this.preconditionSkip,
+    this.negate = false,
+  });
+
+  /// Creates an instance of [BaseAssertion] that will never run any
+  /// assertions, because it failed a precondition.
+  factory BaseAssertion.never() =>
+      BaseAssertion<T>(null as T?, preconditionSkip: true);
 
   /// The actual value being tested.
-  final Object? actual;
+  final T? actual;
 
   /// If true, all assertions will be skipped.
   final bool? preconditionSkip;
@@ -17,33 +31,8 @@ abstract class BaseAssertion {
   final bool negate;
 }
 
-/// A typed expectation that provides type-specific assertion methods.
-class TypedAssertion<T> extends BaseAssertion {
-  /// Creates an instance of [TypedAssertion].
-  TypedAssertion(T actual, {bool? preconditionSkip, bool negate = false})
-      : super(
-          actual,
-          preconditionSkip: preconditionSkip,
-          negate: negate,
-        );
-
-  /// Creates an instance of [TypedAssertion] that will never run any
-  /// assertions, because it failed a precondition.
-  TypedAssertion.never()
-      : super(
-          null,
-          preconditionSkip: true,
-          negate: false,
-        );
-}
-
-/// Starts an expectation chain with the given [actual] value.
-TypedAssertion<T> expectThat<T>(T actual) {
-  return TypedAssertion<T>(actual);
-}
-
 /// Assertion methods
-extension BaseAssertionMethods<A extends BaseAssertion> on A {
+extension BaseAssertionMethods<A extends BaseAssertion<Object?>> on A {
   /// Asserts that [actual] matches the given [matcher].
   ///
   /// This is the most basic assertion method, which is a direct wrapper around
@@ -139,12 +128,12 @@ extension BaseAssertionMethods<A extends BaseAssertion> on A {
   }
 
   /// Asserts that [actual] is of type [T].
-  TypedAssertion<T> isA<T>({String? because, Object? when}) {
+  BaseAssertion<T> isA<T>({String? because, Object? when}) {
     matches(test.isA<T>(), because: because, when: when);
     if (_skip(when)) {
-      return TypedAssertion.never();
+      return BaseAssertion.never();
     }
-    return TypedAssertion(actual as T);
+    return BaseAssertion(actual as T);
   }
 
   /// Asserts that [actual] is not of type [T].

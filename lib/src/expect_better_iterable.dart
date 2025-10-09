@@ -3,7 +3,7 @@ import 'package:expect_better/src/matchers.dart' as matchers;
 import 'package:test/test.dart' as test;
 
 /// Assertion methods
-extension IterableBaseAssertionMethods<A extends BaseAssertion> on A {
+extension IterableBaseAssertionMethods<A extends BaseAssertion<Object?>> on A {
   /// Asserts that [actual] is an [Iterable].
   /// You can also provide additional matchers to check the contents of the
   /// iterable:
@@ -15,7 +15,7 @@ extension IterableBaseAssertionMethods<A extends BaseAssertion> on A {
   /// items.
   /// - [containingNoneOf]: checks that the iterable contains none of the given
   /// items.
-  TypedAssertion<Iterable<Object?>> isIterable({
+  BaseAssertion<Iterable<Object?>> isIterable({
     String? because,
     Object? when,
     Iterable<Object?>? containingAllOf,
@@ -43,7 +43,7 @@ extension IterableBaseAssertionMethods<A extends BaseAssertion> on A {
   /// items.
   /// - [containingNoneOf]: checks that the iterable contains none of the given
   /// items.
-  TypedAssertion<Iterable<T>> isIterableOf<T>({
+  BaseAssertion<Iterable<T>> isIterableOf<T>({
     String? because,
     Object? when,
     Iterable<T>? containingAllOf,
@@ -85,10 +85,10 @@ extension IterableBaseAssertionMethods<A extends BaseAssertion> on A {
 }
 
 /// Typed assertion methods for [Iterable]s.
-extension IterableTypedAssertionMethods<T,
-    A extends TypedAssertion<Iterable<T>>> on A {
+extension IterableTypedAssertionMethods<T, A extends BaseAssertion<Iterable<T>>>
+    on A {
   /// Asserts that [actual] contains any of the [items].
-  TypedAssertion<Iterable<T>> containsAnyOf(
+  BaseAssertion<Iterable<T>> containsAnyOf(
     Iterable<T> items, {
     String? because,
     Object? when,
@@ -102,7 +102,7 @@ extension IterableTypedAssertionMethods<T,
   }
 
   /// Asserts that [actual] contains all of the [items].
-  TypedAssertion<Iterable<T>> containsAllOf(
+  BaseAssertion<Iterable<T>> containsAllOf(
     Iterable<T> items, {
     String? because,
     Object? when,
@@ -116,7 +116,7 @@ extension IterableTypedAssertionMethods<T,
   }
 
   /// Asserts that [actual] contains all of the [items] in order.
-  TypedAssertion<Iterable<T>> containsAllOfInOrder(
+  BaseAssertion<Iterable<T>> containsAllOfInOrder(
     Iterable<T> items, {
     String? because,
     Object? when,
@@ -130,7 +130,7 @@ extension IterableTypedAssertionMethods<T,
   }
 
   /// Asserts that [actual] contains none of the [items].
-  TypedAssertion<Iterable<T>> containsNoneOf(
+  BaseAssertion<Iterable<T>> containsNoneOf(
     Iterable<T> items, {
     String? because,
     Object? when,
