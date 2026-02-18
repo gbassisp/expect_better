@@ -1,5 +1,5 @@
 /// Better test assertions for Dart
-library expect_better;
+library;
 
 export 'src/expect_better_base.dart';
 export 'src/expect_better_iterable.dart';
