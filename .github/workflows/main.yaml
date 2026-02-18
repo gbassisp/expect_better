@@ -15,16 +15,6 @@ on:
       - master
 
 jobs:
-  test-latest-2: # runs on dart 2 matching stable test lib
-    runs-on: ubuntu-latest
-    timeout-minutes: 60
-    steps:
-    - uses: actions/checkout@v3
-    - uses: subosito/flutter-action@v2
-      with:
-        flutter-version: '2.5.3'
-    - run: ls -la
-    - run: make version get downgrade dry-run test
   # runs the latest dart version supported by the package
   test-latest:
     runs-on: ubuntu-latest

@@ -1,4 +1,4 @@
 /// Better test assertions for Dart
-library match_better;
+library;
 
 export 'src/matchers.dart';

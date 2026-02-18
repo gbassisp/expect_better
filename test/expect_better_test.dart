@@ -427,7 +427,7 @@ class _TestObject {
 }
 
 class _ChildTestObject extends _TestObject {
-  _ChildTestObject(int value) : super(value);
+  _ChildTestObject(super.value);
 }
 
 class _CustomIterable extends Iterable<int> {
