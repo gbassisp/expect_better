@@ -29,6 +29,25 @@ class BaseAssertion<T> {
 
   /// If true, all assertions are negated.
   final bool negate;
+
+  /// Passes [actual] to an assertion function
+  BaseAssertion<T> satisfies(
+    bool Function(T actual) assertion, {
+    String? because,
+    Object? when,
+  }) {
+    final a = actual;
+    if (a is! T) {
+      fail('not the expected type');
+    }
+    expectThat(assertion(a)).isTrue(because: because, when: when);
+
+    // ignore: avoid_returning_this - for method chaining
+    return this;
+  }
+
+  /// wrapper for [fail()] from the test library
+  Never fail(String reason) => test.fail(reason);
 }
 
 /// Assertion methods
