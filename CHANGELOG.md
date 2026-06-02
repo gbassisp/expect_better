@@ -1,3 +1,8 @@
+## 1.2.0
+
+- Added `expectThat(...).fail()`
+- Added `expectThat(...).satisfies(...)`
+
 ## 1.1.1
 
 - Lower unnecessarily high constraints
