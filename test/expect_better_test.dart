@@ -416,7 +416,29 @@ void main() {
         throwsNoSuchMethodError,
       );
 
-      expectThat(str).isA<String>().startsWith('a').endsWith('string');
+      expectThat(str)
+          .isA<String>()
+          .startsWith('a')
+          .endsWith('string')
+          .satisfies((actual) => actual.runtimeType == 'a'.runtimeType);
+    });
+
+    test('nullable types are also reconignised', () {
+      // this is part of the test
+      // ignore: unnecessary_nullable_for_final_variable_declarations
+      const Object? str = 'a string';
+      expect(
+        () {
+          // the test shows the method is not available until upcast
+          // ignore: avoid_dynamic_calls
+          (expectThat(str) as dynamic).startsWith('a').endsWith('string');
+        },
+        throwsNoSuchMethodError,
+      );
+
+      expectThat(str)
+          .isA<String?>()
+          .satisfies((actual) => actual.runtimeType == 'a'.runtimeType);
     });
   });
 }
