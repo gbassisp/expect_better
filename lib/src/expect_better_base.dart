@@ -147,4 +147,10 @@ extension BaseAssertionMethods<A extends BaseAssertion<Object?>> on A {
     doesNotMatch(test.equals(other), because: because, when: when);
     return this;
   }
+
+  /// Asserts that [actual] is equal to [other].
+  A isEqualButNotIdenticalTo(Object? other, {String? because, Object? when}) {
+    matches(matchers.equalsButNotSameAs(other), because: because, when: when);
+    return this;
+  }
 }

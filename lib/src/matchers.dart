@@ -1,6 +1,10 @@
 import 'package:lean_extensions/lean_extensions.dart';
 import 'package:test/test.dart';
 
+/// A matcher that checks if two objects are equal but not the same instance.
+Matcher equalsButNotSameAs(Object? other) =>
+    allOf(equals(other), isNot(same(other)));
+
 /// A matcher that checks if an iterable contains any of the given [items].
 Matcher containsAnyOf<T>(Iterable<T> items) => _ContainsAnyOf<T>(items.toSet());
 
