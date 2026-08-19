@@ -1,3 +1,7 @@
+## 1.3.3
+
+- Added missing `when` guard clause on `satisfies` assertion
+
 ## 1.3.2
 
 - Added a few more assertions
