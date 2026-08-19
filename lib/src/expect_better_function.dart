@@ -20,6 +20,6 @@ extension FunctionTypedAssertionMethods<A extends BaseAssertion<Function>>
       when: when,
     );
 
-    return expectThat(matcher.resultAsT).isA<T>(because: because, when: when);
+    return expectThat(matcher.result).isA<T>(because: because, when: when);
   }
 }

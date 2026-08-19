@@ -47,7 +47,6 @@ class ReturnsA<T> extends Matcher {
   Object? result;
   bool started = false;
   bool completed = false;
-  T get resultAsT => result as T;
 
   @override
   Description describe(Description description) {
