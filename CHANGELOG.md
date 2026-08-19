@@ -1,3 +1,10 @@
+## 1.3.0
+
+- Added a few more assertions
+  - `.returnsA<T>()` 
+  - `.hasLength()`
+  - `.isEqualButNotIdenticalTo()`
+
 ## 1.2.0
 
 - Added `expectThat(...).fail()`
