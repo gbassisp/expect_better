@@ -1,6 +1,6 @@
 name: expect_better
 description: Better assertions, but still using dart test library. Better readability and discovery when using code completion, without compromises.
-version: 1.3.0
+version: 1.3.1
 repository: https://github.com/gbassisp/expect_better
 
 environment:
