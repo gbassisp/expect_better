@@ -36,13 +36,16 @@ class BaseAssertion<T> {
     String? because,
     Object? when,
   }) {
+    if (skip(when)) {
+      return BaseAssertion<T>.never();
+    }
+
     final a = actual;
     if (a is! T) {
       fail('not the expected type');
     }
     expectThat(assertion(a)).isTrue(because: because, when: when);
 
-    // ignore: avoid_returning_this - for method chaining
     return this;
   }
 
