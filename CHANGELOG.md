@@ -1,4 +1,4 @@
-## 1.3.1
+## 1.3.2
 
 - Added a few more assertions
   - `.returnsA<T>()` 
