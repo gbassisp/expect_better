@@ -150,4 +150,8 @@ extension IterableTypedAssertionMethods<T, A extends BaseAssertion<Iterable<T>>>
     );
     return this;
   }
+
+  /// Asserts that [actual] has the given [length].
+  A hasLength(int length, {String? because, Object? when}) =>
+      matches(test.hasLength(length), because: because, when: when);
 }
